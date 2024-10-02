@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Form</title>
+</head>
+<body>
+    <h1>Student Registration Form</h1>
+    <form action="/add" method="post">
+        <!-- Name: Required must be characters -->
+        <label for="name">Name: 
+            <input type="text" name="name" id="name" required pattern="[A-Za-z\s]+" title="Please enter only characters.">
+        </label><br><br>
+
+        <!-- Email: Validation placeholder -->
+        <label for="email">Email: 
+            <input type="email" name="email" id="email" placeholder="please enter valid email address" required>
+        </label><br><br>
+
+        <!-- Phone: Specific format -->
+        <label for="phone">Phone: 
+            <input type="tel" name="phone" id="phone" pattern="080-\d{3}-\d{4}" placeholder="080-555-5555" required>
+        </label><br><br>
+
+        <!-- Semester: Range from 1 to 8 -->
+        <label for="sem">Semester: 
+            <input type="number" name="sem" id="sem" min="1" max="8" required>
+        </label><br><br>
+
+        <!-- Branch: Data list -->
+        <label for="branch">Branch: 
+            <input list="branches" name="branch" id="branch" required>
+            <datalist id="branches">
+                <option value="CSE">Computer Science Engg</option>
+                <option value="MEC">Mechanical Engg</option>
+                <option value="ECE">Electronics and Communication Engg</option>
+            </datalist>
+        </label><br><br>
+
+        <!-- Website: Required pattern -->
+        <label for="website">Website: 
+            <input type="url" name="website" id="website" pattern="https?://.*" placeholder="http:// or https://" required>
+        </label><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
