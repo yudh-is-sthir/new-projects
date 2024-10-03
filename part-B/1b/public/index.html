@@ -1,81 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Employee Management System</title>
-  </head>
-  <body>
-    <form action="/add" method="post">
-      <!-- USN field -->
-      <label for="usn"
-        >Enter your USN:
-        <input
-          type="text"
-          name="usn"
-          id="usn"
-          required
-          pattern="1[Mm][Ss]\d{2}[A-Za-z]{2}\d{3}"
-          placeholder="eg. 1MS22CS086" /></label
-      ><br /><br />
 
-      <!-- Name field -->
-      <label for="name"
-        >Enter your Name:
-        <input
-          type="text"
-          name="name"
-          id="name"
-          required
-          pattern=".{3,}" /></label
-      ><br /><br />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Management System</title>
+  <style>
+    .tbl {
+      border: 2px solid black;
+      width: 100%;
+    }
 
-      <!-- Subject code field -->
-      <label for="sub"
-        >Enter your Sub-code:
-        <input list="sub-code" name="sub" />
-        <datalist id="sub-code">
-          <option value="CS51">
-            Artificial Intelligence and Machine Learning
-          </option>
-          <option value="AL61">Management and Entrepreneurship</option>
-          <option value="CSL66">Web Lab</option>
-        </datalist> </label
-      ><br /><br />
+    .tbl td,
+    .tbl th {
+      border: 1px solid black;
+      text-align: center;
+      padding: 10px;
+    }
+  </style>
+</head>
 
-      <!-- Marks field -->
-      <label for="marks"
-        >Enter your Marks:
-        <input
-          type="number"
-          name="marks"
-          id="marks"
-          required
-          pattern="\d+" /></label
-      ><br /><br />
-      <input type="submit" value="Submit Form" />
-    </form>
-    <table>
-        <tr>
-            <th>USN</th>
-            <th>Name</th>
-            <th>Subject</th>
-            <th>Marks</th>
-            <th>Delete</th>
-        </tr>
-    </table>
-    <button onclick="getData()">Fetch Data</button>
+<body>
+  <form action="/add" method="post">
+    <!-- USN field -->
+    <label for="usn">Enter your USN:
+      <input type="text" name="usn" id="usn" required pattern="1[Mm][Ss]\d{2}[A-Za-z]{2}\d{3}"
+        placeholder="eg. 1MS22CS086" /></label><br /><br />
 
-    <script>
-        async function getData(){
-            const response = await fetch("/get")
-            if(response.ok){
-                const students = await response.json()
-                students.forEach(element => {
-                    console.log(element)
-                });
-            }
+    <!-- Name field -->
+    <label for="name">Enter your Name:
+      <input type="text" name="name" id="name" required pattern=".{3,}" /></label><br /><br />
+
+    <!-- Subject code field -->
+    <label for="sub">Enter your Sub-code:
+      <input list="sub-code" name="sub" />
+      <datalist id="sub-code">
+        <option value="CS51">
+          Artificial Intelligence and Machine Learning
+        </option>
+        <option value="AL61">Management and Entrepreneurship</option>
+        <option value="CSL66">Web Lab</option>
+      </datalist> </label><br /><br />
+
+    <!-- Marks field -->
+    <label for="marks">Enter your Marks:
+      <input type="number" name="marks" id="marks" required pattern="\d+" /></label><br /><br />
+    <input type="submit" value="Submit Form" />
+  </form>
+  <table id="" class="tbl">
+    <thead>
+
+      <tr>
+        <th>USN</th>
+        <th>Name</th>
+        <th>Subject</th>
+        <th>Marks</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+
+    </tbody>
+  </table>
+  <button onclick="getData()">Fetch Data</button>
+
+  <script>
+    async function getData() {
+      const response = await fetch("/get")
+      if (response.ok) {
+        const students = await response.json()
+        display(students)
+      }
+    }
+
+    function display(students) {
+      const tbody = document.getElementById('tbody')
+      tbody.innerHTML = ""
+      students.forEach((ele) => {
+        for (subs of ele.subjects) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+          <td>${ele.usn}</td>
+          <td>${ele.name}</td>
+          <td>${subs.sub}</td>
+          <td>${subs.marks}</td>
+          <td><button data-_id='${ele._id}'' data-sub='${subs.sub}' onclick='delStudent(event)'>Delete</td>
+            `
+          tbody.appendChild(tr)
         }
-    </script>
-  </body>
+      })
+    }
+
+    async function delStudent(e) {
+      const button = e.target;
+      const studentId = button.getAttribute("data-_id");
+      const studentSub = button.getAttribute("data-sub");
+
+      console.log(studentId, studentSub)
+      
+      const delResponse = await fetch(`/delete/${studentId}/${studentSub}`, {
+        method: "DELETE"
+      });
+      
+      console.log(delResponse)
+      if(delResponse.ok){
+        alert("Student Deleted Successfully")
+        e.target.parentElement.parentElement.remove();
+      }else {
+        console.log("Error Deleting Student Details")
+      }
+    }
+  </script>
+</body>
+
 </html>
