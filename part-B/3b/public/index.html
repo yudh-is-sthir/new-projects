@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee management System</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 1.25em;
+        font-weight: bold;
+        /* justify-content: center; */
+        margin: 20px auto;
+      }
+
+      table{
+        border: 3px solid black;
+        padding: 2px 6px;
+      }
+
+      table td,
+      table th {
+        border: 2px solid black;
+        padding: 5px 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <form class="container" action="/add" method="post">
+      <label for="emp_name"
+        >Enter Your Name:
+        <input required type="text" name="name" id="emp_name" /></label
+      ><br /><br />
+      <label for="emp_email"
+        >Enter Your Email:
+        <input required type="email" name="email" id="emp_email" /></label
+      ><br /><br />
+      <label for="emp_phone"
+        >Enter Your Phone:
+        <input required type="tel" name="phone" id="emp_phone" /></label
+      ><br /><br />
+      <label for="emp_hire_date"
+        >Enter Your Hiring Date:
+        <input required type="date" name="hDate" id="emp_hire_date" /></label
+      ><br /><br />
+      <label for="emp_job_title"
+        >Enter Your Job title:
+        <input
+          required
+          type="text"
+          list="title-list"
+          name="title"
+          id="emp_job_title"
+        />
+        <datalist id="title-list">
+          <option value="Front End Dev">Front End Developer</option>
+          <option value="Back End Dev">Back End Developer</option>
+          <option value="Fullstack Dev">Fullstack Developer</option>
+          <option value="Devops Dev">Devops Developer</option>
+        </datalist></label
+      ><br /><br />
+      <label for="emp_salary"
+        >Enter Your Salary:
+        <input required type="text" name="salary" id="emp_salary" /></label
+      ><br /><br />
+      <input type="submit" value="Submit Form" /><br /><br />
+      <button type="button" onclick="fetchData()">Fetch data</button>
+    </form>
+
+    <script>
+      const body = document.querySelector("body");
+
+      const table = document.createElement("table");
+
+      const tHead = document.createElement("thead");
+
+      let tBody = document.createElement("tbody");
+
+      table.id = "display";
+
+      tHead.innerHTML = `
+        <tr>
+          <th> Name </th>
+          <th> Email </th>
+          <th> Phone </th>
+          <th> Hiring Date </th>
+          <th> Job Title </th>
+          <th> Salary </th>
+        </tr>
+      `;
+
+      async function fetchData() {
+        try {
+          tBody.innerHTML = "";
+          const response = await fetch("/get/data");
+          if (response.ok) {
+            const data = await response.json();
+
+            // successfully received data
+            body.appendChild(table);
+            table.appendChild(tHead);
+
+            console.log(data);
+            data.forEach((element) => {
+              if (element.salary > 50000) {
+                tBody.innerHTML += `
+                  <tr>
+                    <td> ${element.name} </td>
+                    <td> ${element.email} </td>
+                    <td> ${element.phone} </td>
+                    <td> ${element.hDate.split("T")[0]} </td>
+                    <td> ${element.title} </td>
+                    <td> ${element.salary} </td>
+                  </tr>
+                `;
+              }
+            });
+            table.appendChild(tBody);
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    </script>
+  </body>
+</html>
